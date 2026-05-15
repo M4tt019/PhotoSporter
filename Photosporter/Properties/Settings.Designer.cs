@@ -26,5 +26,185 @@ namespace Photosporter.Properties
                 return defaultInstance;
             }
         }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string CartellaDestinazione
+        {
+            get
+            {
+                return ((string)(this["CartellaDestinazione"]));
+            }
+            set
+            {
+                this["CartellaDestinazione"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool CreaNuovaCartella
+        {
+            get
+            {
+                return ((bool)(this["CreaNuovaCartella"]));
+            }
+            set
+            {
+                this["CreaNuovaCartella"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string NomeNuovaCartella
+        {
+            get
+            {
+                return ((string)(this["NomeNuovaCartella"]));
+            }
+            set
+            {
+                this["NomeNuovaCartella"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool OrdinaPerData
+        {
+            get
+            {
+                return ((bool)(this["OrdinaPerData"]));
+            }
+            set
+            {
+                this["OrdinaPerData"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool OrdinaPerGiorno
+        {
+            get
+            {
+                return ((bool)(this["OrdinaPerGiorno"]));
+            }
+            set
+            {
+                this["OrdinaPerGiorno"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool DataEuropea
+        {
+            get
+            {
+                return ((bool)(this["DataEuropea"]));
+            }
+            set
+            {
+                this["DataEuropea"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool DataAmericana
+        {
+            get
+            {
+                return ((bool)(this["DataAmericana"]));
+            }
+            set
+            {
+                this["DataAmericana"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public int GiornoIniziale
+        {
+            get
+            {
+                return ((int)(this["GiornoIniziale"]));
+            }
+            set
+            {
+                this["GiornoIniziale"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool CancellaOrigine
+        {
+            get
+            {
+                return ((bool)(this["CancellaOrigine"]));
+            }
+            set
+            {
+                this["CancellaOrigine"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool CartelleDoppie
+        {
+            get
+            {
+                return ((bool)(this["CartelleDoppie"]));
+            }
+            set
+            {
+                this["CartelleDoppie"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool CancellaDoppioni
+        {
+            get
+            {
+                return ((bool)(this["CancellaDoppioni"]));
+            }
+            set
+            {
+                this["CancellaDoppioni"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public int LivelloSoglia
+        {
+            get
+            {
+                return ((int)(this["LivelloSoglia"]));
+            }
+            set
+            {
+                this["LivelloSoglia"] = value;
+            }
+        }
     }
 }

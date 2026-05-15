@@ -55,9 +55,9 @@
             this.label7 = new System.Windows.Forms.Label();
             this.cbCancellaDoppioni = new System.Windows.Forms.CheckBox();
             this.pnCancellaDoppioni = new System.Windows.Forms.Panel();
-            this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
-            this.trbLivelloSoglia = new System.Windows.Forms.TrackBar();
             this.label8 = new System.Windows.Forms.Label();
+            this.trbLivelloSoglia = new System.Windows.Forms.TrackBar();
+            this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.pnNewDirectory.SuspendLayout();
             this.pnOrdinamento.SuspendLayout();
             this.pnTypeDate.SuspendLayout();
@@ -365,6 +365,16 @@
             this.pnCancellaDoppioni.Size = new System.Drawing.Size(381, 72);
             this.pnCancellaDoppioni.TabIndex = 14;
             // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(7, 22);
+            this.label8.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(186, 19);
+            this.label8.TabIndex = 15;
+            this.label8.Text = "Livello di tolleranza doppioni:";
+            // 
             // trbLivelloSoglia
             // 
             this.trbLivelloSoglia.LargeChange = 3;
@@ -375,16 +385,7 @@
             this.trbLivelloSoglia.Size = new System.Drawing.Size(167, 45);
             this.trbLivelloSoglia.TabIndex = 0;
             this.trbLivelloSoglia.Value = 1;
-            // 
-            // label8
-            // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(7, 22);
-            this.label8.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(186, 19);
-            this.label8.TabIndex = 15;
-            this.label8.Text = "Livello di tolleranza doppioni:";
+            this.trbLivelloSoglia.Scroll += new System.EventHandler(this.trbLivelloSoglia_Scroll);
             // 
             // FrmHome
             // 
@@ -412,6 +413,7 @@
             this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.Name = "FrmHome";
             this.Text = "Photosporter";
+            //this.Load += new System.EventHandler(this.FrmHome_Load);
             this.pnNewDirectory.ResumeLayout(false);
             this.pnNewDirectory.PerformLayout();
             this.pnOrdinamento.ResumeLayout(false);

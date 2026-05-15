@@ -15,12 +15,19 @@ using MetadataExtractor.Formats.Exif;
 
 namespace PhotoSorter
 {
+    public class PhotoProgress
+    {
+        public int Value { get; set; }
+        public int Maximum { get; set; }
+    }
+
     public class ClsPhotoOrganizer
     {
         #region attributi
         bool _cancellare;        //indica se i file devono essere cancellati e meno
         string _formatoData;    //indica quali formato di data si utilizza
          List<string> _cartelleCreate = new List<string>(); //elenco delle cartelle create
+        List<string> _errori = new List<string>();
         #endregion
         #region costrutture
         public ClsPhotoOrganizer()
@@ -33,15 +40,17 @@ namespace PhotoSorter
         public bool Cancellare { get => _cancellare; set => _cancellare = value; }
         public string FormatoData { get => _formatoData; set => _formatoData = value; }
         public  List<string> CartelleCreate { get => _cartelleCreate; set => _cartelleCreate = value; }
+        public List<string> Errori { get => _errori; set => _errori = value; }
         #endregion
 
         #region metodi
-        public void OrganizePhotos(string sourceFolder, string destinationFolder, int startDay, ProgressBar progressBar)
+        public void OrganizePhotos(string sourceFolder, string destinationFolder, int startDay, IProgress<PhotoProgress> progress)
         {
-            CartelleCreate = CartelleCreate.OrderBy(folder => folder).ToList();
+            CartelleCreate = CartelleCreate.Distinct().OrderBy(folder => folder).ToList();
             List<String> CartelleCreateApp = new List<string>(CartelleCreate);
-            progressBar.Maximum = CartelleCreateApp.Count;
-            progressBar.Value = 0;
+            List<string> cartelleGiornoCreate = new List<string>();
+            int valore = 0;
+            progress?.Report(new PhotoProgress { Maximum = CartelleCreateApp.Count, Value = valore });
 
             foreach (var file in CartelleCreateApp)
             {
@@ -49,26 +58,36 @@ namespace PhotoSorter
                 {
                     if (System.IO.Directory.Exists(file))
                     {
-                        ClsFolderManager.CopyFolder(file, destinationFolder + @"\Giorno " + startDay);
+                        string cartellaGiorno = Path.Combine(destinationFolder, "Giorno " + startDay);
+                        ClsFolderManager.CopyFolder(file, cartellaGiorno, Errori);
                         System.IO.Directory.Delete(file, true);
                         CartelleCreate.Remove(file);
+                        cartelleGiornoCreate.Add(cartellaGiorno);
                         startDay++;
-
-                        progressBar.Value++;
                     }
-                }catch
+                }
+                catch (Exception ex)
                 {
-                    MessageBox.Show($"errore con l'immagine {file}.", "Errore", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    Errori.Add($"Errore con la cartella {file}: {ex.Message}");
+                }
+                finally
+                {
+                    valore++;
+                    progress?.Report(new PhotoProgress { Maximum = CartelleCreateApp.Count, Value = valore });
                 }
 
             }
+
+            CartelleCreate = cartelleGiornoCreate;
         }
-        public void OrganizePhotosByDate(string sourceFolder, string destinationFolder, string dateFormat, ProgressBar progressBar)
+        public void OrganizePhotosByDate(string sourceFolder, string destinationFolder, string dateFormat, IProgress<PhotoProgress> progress)
         {
+            CartelleCreate.Clear();
+            Errori.Clear();
             var imageFiles = GetImmagines(sourceFolder);
             int totalFiles = imageFiles.Count;
-            progressBar.Maximum = totalFiles;
-            progressBar.Value = 0;
+            int valore = 0;
+            progress?.Report(new PhotoProgress { Maximum = totalFiles, Value = valore });
             foreach (var file in imageFiles)
             {
                 try
@@ -82,11 +101,14 @@ namespace PhotoSorter
                     string destinationPath;
                     copiaOordina(dateFolder, file, out destinationPath);
                     CartelleCreate.Add(dateFolder);
-                    //Aggiorna la progress bar
-                    progressBar.Value++;
-                }catch
+                }catch (Exception ex)
                 {
-                    MessageBox.Show($"errore con l'immagine {file}.","Errore",MessageBoxButtons.OK,MessageBoxIcon.Error);
+                    Errori.Add($"Errore con l'immagine {file}: {ex.Message}");
+                }
+                finally
+                {
+                    valore++;
+                    progress?.Report(new PhotoProgress { Maximum = totalFiles, Value = valore });
                 }
                
 
@@ -95,25 +117,88 @@ namespace PhotoSorter
         public void copiaOordina(string nameFolder, string file, out string destinationPath)
         {
             // Sposta o copia file il file
-            destinationPath = Path.Combine(nameFolder, Path.GetFileName(file));
-            if (!File.Exists(destinationPath))
+            destinationPath = GetDestinationPathUnivoco(nameFolder, file);
+            if (string.IsNullOrWhiteSpace(destinationPath))
             {
-                if (Cancellare)
-                    File.Move(file, destinationPath);
-                else
-                    File.Copy(file, destinationPath);
+                if (Cancellare && File.Exists(file))
+                    File.Delete(file);
+                return;
             }
 
+            if (Cancellare)
+                File.Move(file, destinationPath);
+            else
+                File.Copy(file, destinationPath);
+
+        }
+
+        private string GetDestinationPathUnivoco(string folder, string sourcePath)
+        {
+            string fileName = Path.GetFileName(sourcePath);
+            string destinationPath = Path.Combine(folder, fileName);
+            if (!File.Exists(destinationPath))
+                return destinationPath;
+
+            FileInfo sorgente = new FileInfo(sourcePath);
+            FileInfo destinazione = new FileInfo(destinationPath);
+            if (sorgente.Length == destinazione.Length)
+                return string.Empty;
+
+            string nomeSenzaEstensione = Path.GetFileNameWithoutExtension(fileName);
+            string estensione = Path.GetExtension(fileName);
+            int contatore = 1;
+
+            do
+            {
+                destinationPath = Path.Combine(folder, $"{nomeSenzaEstensione} ({contatore}){estensione}");
+                if (File.Exists(destinationPath) && sorgente.Length == new FileInfo(destinationPath).Length)
+                    return string.Empty;
+
+                contatore++;
+            }
+            while (File.Exists(destinationPath));
+
+            return destinationPath;
         }
 
 
         public static List<string> GetImmagines(string sourceFolder)
         {
-            return System.IO.Directory.GetFiles(sourceFolder, "*.*", SearchOption.AllDirectories)
-                                      .Where(f => f.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase) ||
-                                                  f.EndsWith(".png", StringComparison.OrdinalIgnoreCase) ||
-                                                  f.EndsWith(".jpeg", StringComparison.OrdinalIgnoreCase))
-                                      .ToList();
+            List<string> immagini = new List<string>();
+            Queue<string> cartelle = new Queue<string>();
+            cartelle.Enqueue(sourceFolder);
+
+            while (cartelle.Count > 0)
+            {
+                string cartellaCorrente = cartelle.Dequeue();
+
+                try
+                {
+                    foreach (string file in System.IO.Directory.GetFiles(cartellaCorrente))
+                    {
+                        if (file.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase) ||
+                            file.EndsWith(".png", StringComparison.OrdinalIgnoreCase) ||
+                            file.EndsWith(".jpeg", StringComparison.OrdinalIgnoreCase))
+                        {
+                            immagini.Add(file);
+                        }
+                    }
+                }
+                catch
+                {
+                }
+
+                try
+                {
+                    foreach (string directory in System.IO.Directory.GetDirectories(cartellaCorrente))
+                        cartelle.Enqueue(directory);
+                }
+                catch
+                {
+                }
+            }
+
+            return immagini;
         }
 
         static DateTime? PrendiDataScatto(string path)
