@@ -436,5 +436,10 @@ namespace PhotoSorter
         {
             return "\"" + valore.Replace("\"", "\\\"") + "\"";
         }
+
+        private void FrmHome_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }
